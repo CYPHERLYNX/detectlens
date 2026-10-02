@@ -37,6 +37,13 @@ faster.
 - **Dark, keyboard-first console** — dense rows, `j/k` + `Enter` + `/` + `?`
   flows, severity triple-coded (color + shape + label) everywhere.
 
+## Demo
+
+Watch it audit a live-looking Wazuh deployment in 21 seconds — 44 rules,
+5,000 alerts, dead rules, noise, and blind spots:
+
+[![DetectLens launch video](demo/detectlens-launch.jpg)](demo/detectlens-launch.mp4)
+
 ## 5-minute quickstart
 
 ```bash
