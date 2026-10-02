@@ -1,24 +1,6 @@
-# Python
 __pycache__/
-*.py[cod]
-*.egg-info/
+*.pyc
 .venv/
-venv/
+uploads/*
+!.gitkeep
 .env
-
-# OS / editors
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-
-# DetectLens local state (never commit keys or local data)
-.detectlens_state.json
-uploads/
-
-# Build artifacts
-dist/
-build/
-
-# Local-only launch drafts (never committed)
-LAUNCH-KIT.md
