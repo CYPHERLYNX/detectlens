@@ -1,0 +1,119 @@
+<!--
+  DetectLens seed ruleset — Linux authentication and host detections (Wazuh 4.x style).
+  Synthetic demonstration rules for syslog/sshd/sudo/useradd sources.
+  Product: detectlens.
+-->
+<group name="syslog, sshd, authentication_failed">
+  <rule id="051001" level="5">
+    <match>Failed password</match>
+    <description>sshd: Failed password authentication attempt.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="051002" level="10">
+    <if_matched_sid>051001</if_matched_sid>
+    <same_source_ip />
+    <frequency>10</frequency>
+    <timeframe>120</timeframe>
+    <description>sshd: Possible brute-force attack, multiple failed passwords from same source.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+
+  <!-- Deliberately untagged: informational reverse-DNS telemetry only -->
+  <rule id="051010" level="5">
+    <match>POSSIBLE BREAK-IN ATTEMPT</match>
+    <description>sshd: Reverse DNS mismatch, possible break-in attempt.</description>
+  </rule>
+</group>
+
+<group name="syslog, sshd, authentication_success">
+  <rule id="051003" level="3">
+    <match>Accepted password|Accepted publickey</match>
+    <description>sshd: Successful authentication.</description>
+    <mitre>
+      <id>T1078</id>
+      <id>T1133</id>
+    </mitre>
+  </rule>
+
+  <rule id="051007" level="7">
+    <match>Accepted</match>
+    <match>for root</match>
+    <description>sshd: Direct root login accepted.</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+  </rule>
+
+  <rule id="051009" level="6">
+    <match>Accepted publickey</match>
+    <time>02:00 am - 05:00 am</time>
+    <description>sshd: Publickey login accepted outside business hours.</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="syslog, sudo">
+  <rule id="051004" level="3">
+    <program_name>sudo</program_name>
+    <match>COMMAND=</match>
+    <description>sudo: User executed a privileged command.</description>
+    <mitre>
+      <id>T1548.003</id>
+      <id>T1059.004</id>
+    </mitre>
+  </rule>
+
+  <rule id="051005" level="5">
+    <program_name>sudo</program_name>
+    <match>user NOT in sudoers|authentication failure</match>
+    <description>sudo: Unauthorized privilege escalation attempt.</description>
+    <mitre>
+      <id>T1068</id>
+    </mitre>
+  </rule>
+
+  <!-- Deliberately untagged: session-close telemetry kept for baselining only -->
+  <rule id="051011" level="3">
+    <program_name>sudo</program_name>
+    <match>session closed for user</match>
+    <description>sudo: Session closed for user.</description>
+  </rule>
+</group>
+
+<group name="syslog, account_management">
+  <rule id="051006" level="7">
+    <program_name>useradd</program_name>
+    <match>new user</match>
+    <description>Linux: New user account created (useradd).</description>
+    <mitre>
+      <id>T1136.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="syslog, persistence">
+  <rule id="051008" level="7">
+    <regex>crontab.*installed|/etc/cron\.(d|daily|hourly)/</regex>
+    <description>Linux: Cron job added or modified.</description>
+    <mitre>
+      <id>T1053.003</id>
+    </mitre>
+  </rule>
+
+  <rule id="051012" level="8">
+    <program_name>kernel</program_name>
+    <regex>insmod|modprobe.*\.ko</regex>
+    <description>Linux: Kernel module loaded.</description>
+    <mitre>
+      <id>T1547.006</id>
+    </mitre>
+  </rule>
+</group>

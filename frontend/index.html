@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DetectLens — Detection Posture Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="shell" class="shell backend-unknown">
+  <nav id="rail" aria-label="Primary">
+    <div class="rail-brand" aria-hidden="true"><span class="rail-mark"></span></div>
+    <button class="rail-btn is-active" data-view="overview" aria-label="Overview (g o)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Overview</span>
+    </button>
+    <button class="rail-btn" data-view="heatmap" aria-label="Heatmap (g h)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="10" rx="1"/><rect x="13" y="16" width="8" height="4" rx="1"/></svg>
+      <span>Heatmap</span>
+    </button>
+    <button class="rail-btn" data-view="findings" aria-label="Findings (g f)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+      <span>Findings</span>
+    </button>
+    <button class="rail-btn" data-view="rules" aria-label="Rules (g r)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6 3 12l5 6"/><path d="M16 6l5 6-5 6"/><path d="M13 4l-2 16"/></svg>
+      <span>Rules</span>
+    </button>
+    <button class="rail-btn" data-view="ai" aria-label="AI Studio (g a)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg>
+      <span>AI Studio</span>
+    </button>
+    <button class="rail-btn" data-view="reports" aria-label="Reports (g e)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+      <span>Reports</span>
+    </button>
+    <button class="rail-btn" data-view="settings" aria-label="Settings (g s)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.6.8 1 1.51 1H21a2 2 0 1 1 0 4h-.09c-.71 0-1.37.4-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+    <div class="rail-foot">
+      <button class="rail-btn rail-shortcuts" id="btn-shortcuts" aria-label="Keyboard shortcuts (?)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>
+        <span>Keys</span>
+      </button>
+    </div>
+  </nav>
+
+  <header id="topbar">
+    <div class="topbar-left">
+      <span class="wordmark">DetectLens</span>
+      <span class="wordmark-sub">Detection posture</span>
+    </div>
+    <div class="topbar-center">
+      <div class="globalsearch">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+        <input id="global-search" type="text" placeholder="Search rules, findings, techniques…" autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="mode-chip" class="mode-chip mode-local" title="AI provider mode"><span class="mode-dot"></span><span id="mode-chip-label">Local mode</span></span>
+      <button id="btn-help" class="icon-btn" aria-label="Keyboard shortcuts (?)">?</button>
+    </div>
+  </header>
+
+  <main id="view" tabindex="-1" aria-live="off"></main>
+
+  <div id="backend-banner" class="backend-banner" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+    <span>Backend unreachable — API calls will fail until the server is running. The shell works; data views show error states.</span>
+    <button id="btn-retry-backend" class="btn btn-ghost btn-sm">Retry</button>
+  </div>
+
+  <div id="drawer-scrim" class="scrim" hidden></div>
+  <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Detail" hidden>
+    <div class="drawer-head">
+      <div id="drawer-title" class="drawer-title"></div>
+      <button id="drawer-close" class="icon-btn" aria-label="Close (Esc)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+
+  <div id="modal-scrim" class="scrim" hidden></div>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" hidden></div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <div id="onboard" class="onboard" hidden>
+    <div class="onboard-card">
+      <div class="onboard-step mono" id="onboard-step">1 / 5</div>
+      <h2 id="onboard-title"></h2>
+      <p id="onboard-body"></p>
+      <div class="onboard-actions">
+        <button id="onboard-skip" class="btn btn-ghost">Skip tour</button>
+        <div>
+          <button id="onboard-back" class="btn btn-ghost">Back</button>
+          <button id="onboard-next" class="btn btn-primary">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

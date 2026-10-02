@@ -1,0 +1,127 @@
+<!--
+  DetectLens seed ruleset — web IDS detections (Wazuh 4.x style).
+  Synthetic demonstration rules matching on web access log patterns.
+  Product: detectlens.
+-->
+<group name="web, attack">
+  <rule id="052001" level="10">
+    <match>union.*select|select.*from|sleep\(|benchmark\(|' or '1'='1</match>
+    <description>Web: Possible SQL injection attack.</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="052002" level="8">
+    <match>&lt;script|javascript:|onerror=|onload=</match>
+    <description>Web: Possible cross-site scripting (XSS) attack.</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="052003" level="8">
+    <match>\.\./|\.\.\\|%2e%2e</match>
+    <description>Web: Possible path traversal attack.</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="052004" level="12">
+    <match>; *cat |`.*`|$\(.*\)|; *wget |; *curl </match>
+    <description>Web: Possible OS command injection attack.</description>
+    <mitre>
+      <id>T1190</id>
+      <id>T1059</id>
+    </mitre>
+  </rule>
+
+  <rule id="052005" level="12">
+    <match>c99\.php|r57\.php|wso\.php|webshell|cmd\.jsp</match>
+    <description>Web: Access to known web shell.</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1005</id>
+    </mitre>
+  </rule>
+
+  <rule id="052006" level="6">
+    <match>/\.git/|/\.env|/backup\.|wp-config|/admin.*config</match>
+    <description>Web: Sensitive path enumeration attempt.</description>
+    <mitre>
+      <id>T1083</id>
+    </mitre>
+  </rule>
+
+  <rule id="052008" level="6">
+    <match>sqlmap|nikto|nmap|masscan|dirbuster</match>
+    <description>Web: Known vulnerability scanner user-agent detected.</description>
+    <mitre>
+      <id>T1595.002</id>
+    </mitre>
+  </rule>
+
+  <rule id="052009" level="8">
+    <regex>" 40[13] </regex>
+    <frequency>15</frequency>
+    <timeframe>120</timeframe>
+    <description>Web: Multiple HTTP 401/403 responses, possible auth probing.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+
+  <rule id="052010" level="10">
+    <match>?file=http|?page=http|?url=http</match>
+    <description>Web: Possible remote file inclusion (RFI) attack.</description>
+    <mitre>
+      <id>T1190</id>
+      <id>T1105</id>
+    </mitre>
+  </rule>
+
+  <!-- Deliberately DEAD in the seed window: no XXE payloads observed -->
+  <rule id="052011" level="10">
+    <match>&lt;!ENTITY|SYSTEM.*\.dtd</match>
+    <description>Web: Possible XML external entity (XXE) injection.</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="052012" level="8">
+    <match>169\.254\.169\.254|localhost|127\.0\.0\.1</match>
+    <description>Web: Possible server-side request forgery (SSRF) probe.</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="052014" level="10">
+    <match>wp-login.php</match>
+    <frequency>10</frequency>
+    <timeframe>300</timeframe>
+    <description>Web: WordPress login brute-force attempt (wp-login.php).</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="web, ids">
+  <!-- Deliberately untagged AND noisy: high volume, zero technique attribution -->
+  <rule id="052007" level="6">
+    <match>" 404 </match>
+    <frequency>20</frequency>
+    <timeframe>60</timeframe>
+    <description>Web: Burst of HTTP 404 responses, possible directory probing.</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <!-- Deliberately untagged: low-value protocol telemetry -->
+  <rule id="052013" level="3">
+    <match>Invalid method| 501 </match>
+    <description>Web: Invalid HTTP method requested.</description>
+  </rule>
+</group>

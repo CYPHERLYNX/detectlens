@@ -1,0 +1,149 @@
+<!--
+  DetectLens seed ruleset — Windows host detections (Wazuh 4.x style).
+  Synthetic demonstration rules mirroring real Windows Security log EventIDs.
+  Product: detectlens.
+-->
+<group name="windows, authentication_success">
+  <rule id="050001" level="3">
+    <field name="win.system.eventID">^4624$</field>
+    <field name="win.eventdata.logonType">^[235]$</field>
+    <description>Windows: Successful account logon (EventID 4624).</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="050008" level="6">
+    <field name="win.system.eventID">^4648$</field>
+    <description>Windows: Explicit credential logon attempt (EventID 4648).</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, authentication_failed">
+  <rule id="050002" level="5">
+    <field name="win.system.eventID">^4625$</field>
+    <description>Windows: Failed account logon (EventID 4625).</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+
+  <rule id="050007" level="10">
+    <if_matched_sid>050002</if_matched_sid>
+    <same_source_ip />
+    <frequency>8</frequency>
+    <timeframe>120</timeframe>
+    <description>Windows: Possible brute-force attack, multiple failed logons from same source.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+
+  <!-- Deliberately untagged: lockout telemetry kept for noise baselining only -->
+  <rule id="050009" level="5">
+    <field name="win.system.eventID">^4740$</field>
+    <description>Windows: User account was locked out (EventID 4740).</description>
+  </rule>
+</group>
+
+<group name="windows, privilege">
+  <rule id="050003" level="5">
+    <field name="win.system.eventID">^4672$</field>
+    <description>Windows: Special privileges assigned to new logon (EventID 4672).</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, account_management">
+  <rule id="050004" level="7">
+    <field name="win.system.eventID">^4720$</field>
+    <description>Windows: A user account was created (EventID 4720).</description>
+    <mitre>
+      <id>T1136.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, execution">
+  <rule id="050005" level="10">
+    <field name="win.system.eventID">^4688$</field>
+    <regex>sekurlsa::logonpasswords|procdump.*lsass|ntdsutil.*ifm|mimikatz|lazagne</regex>
+    <description>Windows: Credential-access tooling or masqueraded binary executed (EventID 4688).</description>
+    <mitre>
+      <id>T1003.001</id>
+      <id>T1059.001</id>
+      <id>T1059.003</id>
+      <id>T1036</id>
+    </mitre>
+  </rule>
+
+  <rule id="050011" level="10">
+    <field name="win.system.eventID">^4688$</field>
+    <field name="win.eventdata.image">powershell.exe</field>
+    <regex>-EncodedCommand|-enc |FromBase64String|IEX\(</regex>
+    <description>Windows: Obfuscated or encoded PowerShell command executed.</description>
+    <mitre>
+      <id>T1059.001</id>
+      <id>T1027</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, defense_evasion">
+  <rule id="050006" level="12">
+    <field name="win.system.eventID">^1102$</field>
+    <description>Windows: Security audit log was cleared (EventID 1102).</description>
+    <mitre>
+      <id>T1070.001</id>
+      <id>T1562.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, persistence">
+  <rule id="050010" level="7">
+    <field name="win.system.eventID">^7045$</field>
+    <description>Windows: A new service was installed on the system (EventID 7045).</description>
+    <mitre>
+      <id>T1543.003</id>
+      <id>T1053.005</id>
+      <id>T1569.002</id>
+    </mitre>
+  </rule>
+
+  <!-- Deliberately DEAD in the seed window: registry auditing (4657) is rarely enabled -->
+  <rule id="050013" level="8">
+    <field name="win.system.eventID">^4657$</field>
+    <field name="win.eventdata.objectName">\REGISTRY\MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</field>
+    <description>Windows: Registry Run key modified (EventID 4657).</description>
+    <mitre>
+      <id>T1547.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, credential_access">
+  <!-- Deliberately DEAD in the seed window: no Kerberos pre-auth failures observed -->
+  <rule id="050012" level="5">
+    <field name="win.system.eventID">^4768$</field>
+    <field name="win.eventdata.status">0x18</field>
+    <description>Windows: Kerberos pre-authentication failure, possible Kerberoasting (EventID 4768).</description>
+    <mitre>
+      <id>T1558.003</id>
+    </mitre>
+  </rule>
+</group>
+
+<group name="windows, remote_access">
+  <!-- Deliberately untagged: informational RDP reconnect telemetry only -->
+  <rule id="050014" level="5">
+    <field name="win.system.eventID">^4779$</field>
+    <description>Windows: RDP session reconnected to Window Station (EventID 4779).</description>
+  </rule>
+</group>

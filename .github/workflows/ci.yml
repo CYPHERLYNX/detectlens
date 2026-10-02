@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run tests
+        run: python -m pytest tests/ -q
+      - name: Key-hygiene scan
+        run: |
+          ! grep -rEn "sk-(live|test)-[A-Za-z0-9]{8,}|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY" \
+            --include="*.py" --include="*.json" --include="*.xml" --include="*.yaml" --include="*.yml" \
+            . | grep -v "test_key_hygiene" || (echo "possible key material found" && exit 1)
